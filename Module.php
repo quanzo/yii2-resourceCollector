@@ -1,4 +1,5 @@
 <?php
+
 namespace x51\yii2\modules\resourceCollector;
 use \x51\yii2\modules\resourceCollector\Assets;
 use \Yii;
