@@ -1,7 +1,6 @@
 {
     "name": "quanzo/yii2-resource-collector",
     "description": "Connecting resources defined with views for Yii 2",
-	"version": "1.0.0",
     "authors": [
         {
             "name": "Quanzo",
@@ -17,7 +16,7 @@
     "license": "MIT",
     "require": {
         "php": ">=7.0",
-        "yiisoft/yii2": "~2.0.0",
+        "yiisoft/yii2": "~2.0.0"
     },
     "autoload": {
         "psr-4": {
