@@ -12,9 +12,9 @@ resourseCollector модуль для Yii 2
 Установка и подключение
 -----------------------
 
-1.  Скопировать в папку с модулями
+1.  Скопировать в папку с модулями и подключить *autoload.php*
 
-2.  Подключить *autoload.php*
+2.  Или используя composer: добавить в секцию require проекта ``` "quanzo/yii2-resource-collector": "*" ``` или ``` composer require "quanzo/yii2-resource-collector" ```
 
 3.  Подключить в конфигурации
 
