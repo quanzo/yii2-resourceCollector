@@ -5,7 +5,6 @@ use \Yii;
 
 class Module extends \yii\base\Module
 {
-    
     public $cacheDir = 'cache';
 
     public function init()
