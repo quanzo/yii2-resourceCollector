@@ -11,13 +11,15 @@
     "keywords": [
         "yii2",
         "view",
-		"resources"
+		"packed css",
+		"packed js",
     ],
     "type": "library",
     "license": "MIT",
     "require": {
         "php": ">=7.0",
-        "yiisoft/yii2": "~2.0.0"
+        "yiisoft/yii2": "~2.0.0",
+		"quanzo/x51-frontend": "*"
     },
     "autoload": {
         "psr-4": {
