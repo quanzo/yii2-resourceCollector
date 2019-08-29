@@ -1,7 +1,7 @@
 {
     "name": "quanzo/yii2-resource-collector",
     "description": "Connecting resources defined with views for Yii 2",
-	"version": "1.0.1",
+	"version": "1.0.2",
     "authors": [
         {
             "name": "Quanzo",
@@ -12,7 +12,7 @@
         "yii2",
         "view",
 		"packed css",
-		"packed js",
+		"packed js"
     ],
     "type": "library",
     "license": "MIT",

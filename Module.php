@@ -13,6 +13,8 @@ class Module extends \yii\base\Module
 	public $optimizeTTL = -1;
     public $optimizeCss = false;
     public $optimizeJs = false;
+    public $makePreload = false;
+    public $preload = [];
 
     protected $_arScssImportPath = [];
     protected $_scssVariables = '';
@@ -58,6 +60,9 @@ class Module extends \yii\base\Module
                     $fn = $this->relPathCacheFile($arSelFiles, 'js');
                     $tag = $bender->output($fn, array_keys($arSelFiles));
                     $view->jsFiles[$position][$fn] = $tag;
+                    if ($this->makePreload) {
+                        $this->makePreloadFile($fn);
+                    }
                 }
             }
             if ($this->optimizeCss && $view->cssFiles) {
@@ -65,11 +70,23 @@ class Module extends \yii\base\Module
                 $fn = $this->relPathCacheFile($arSelFiles, 'css');
                 $tag = $bender->output($fn, array_keys($arSelFiles));
                 $view->cssFiles = [$fn => $tag] + $view->cssFiles;
+                if ($this->makePreload) {
+                    $this->makePreloadFile($fn);
+                }
             }
+            
 			Yii::endProfile('resourse-collector-optimize');
 			/*$stat = [];
 			$bender->getCacheStat(Yii::getAlias('@webroot').'/'.$this->cacheDir, $stat);
 			Yii::debug(print_r($stat, true));*/
+        }
+        // preload
+        if ($this->preload) {
+            if ($arPreload = $this->getListFromProp('preload')) {
+                foreach ($arPreload as $fn) {
+                    $this->makePreloadFile($fn);
+                }
+            }
         }
 		
     } // end onOptimizeBender
@@ -99,6 +116,58 @@ class Module extends \yii\base\Module
             Assets::add($f);
         }
     }
+
+    public function setScssImportPath(array $importPath) {
+        $this->_arScssImportPath = $importPath;
+    }
+
+    public function setScssVar(array $vars) {
+        $this->_scssVariables = $importPath;
+    }
+
+    public function setScssFunc(array $funcs) {
+        $this->_scssFunctions = $funcs;
+    }
+
+    protected function getListFromProp($propName) {
+        $arRes = [];
+        if (!empty($this->$propName)) {            
+            if (is_callable($this->$propName)) {
+                $f = $this->$propName;
+                $res = $f();
+                if (is_array($res)) {
+                    $arRes = $res;
+                } else {
+                    $arRes[] = $res;
+                }
+            } else {
+                $arRes = $this->$propName;
+            }
+        }
+        return $arRes;
+    }
+
+    protected function makePreloadFile($f) {
+        $headers = Yii::$app->response->headers;
+        // check type        
+        $q = strpos($f, '?');
+        if ($q !== false) {
+            $ext = strtolower(pathinfo(substr($f, 0, $q), PATHINFO_EXTENSION));
+        } else {
+            $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+        }
+        if (!empty($ext)) {
+            $type = ($ext == 'css' ? 'style' : ($ext == 'js' ? 'script' : ''));
+            if ($type) {
+                Yii::$app->response->headers->add('Link', '<'.$f.'>; rel=preload; as='.$type);
+                Yii::$app->view->registerLinkTag([
+                    'rel' => 'preload',
+                    'href' => $f,
+                    'as' => $type
+                ]);
+            }
+        }
+    } // end preloadFile
 
     protected function chooseResources(array &$ar) {
         $res = [];

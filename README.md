@@ -1,22 +1,49 @@
-resourseCollector модуль для Yii 2
+resourseCollector module for Yii 2
 ==================================
 
-Модуль позволяет задавать к каждому шаблону стили и скрипты. Для этого задаются
-два файла с именем шаблона и с расширениями css и js.
+-   The module allows you to set styles and scripts for each template. To do
+    this, set two files with the template name and with the extensions css and /
+    or js. In such resources relative links cannot be used.
 
-Каждый тип ресурсов объединяется в файл. Эти файлы размещаются в папку,
-доступную для вебсервиса. И эти ресурсы подключаются к странице.
+-   Each type of resource is combined into a file. These files are placed in a
+    folder, available for web service. And these resources are connected to the
+    page.
 
-В ресурсах нельзя использовать относительные ссылки.
+-   Compression of other resources into one file is available.
 
-Установка и подключение
------------------------
+-   Scss files will be converted to css. Customization required.
 
-1.  Скопировать в папку с модулями и подключить *autoload.php*
+-   Marking resources as preload is supported
+    (https://developer.mozilla.org/ru/docs/Web/HTML/Preloading_content).
 
-2.  Или используя composer: добавить в секцию require проекта ``` "quanzo/yii2-resource-collector": "*" ``` или ``` composer require "quanzo/yii2-resource-collector" ```
+\--------------------------------------------------------------------------
 
-3.  Подключить в конфигурации
+-   Модуль позволяет задавать к каждому шаблону стили и скрипты. Для этого
+    задаются два файла с именем шаблона и с расширениями css и/или js. В таких
+    ресурсах нельзя использовать относительные ссылки.
+
+-   Каждый тип ресурсов объединяется в файл. Эти файлы размещаются в папку,
+    доступную для вебсервиса. И эти ресурсы подключаются к странице.
+
+-   Доступно сжатие других ресурсов в один файл.
+
+-   Файлы scss будут преобразованы в css. Необходима настройка.
+
+-   Поддерживается пометка ресусов, как preload
+    (https://developer.mozilla.org/ru/docs/Web/HTML/Preloading_content).
+
+\--------------------------------------------------------------------------
+
+Installation
+------------
+
+1.  Copy to the folder with modules and connect *autoload.php*
+
+2.  Or use composer: add to the *require* section of the project
+    `"quanzo/yii2-resource-collector": "*"` or `composer require
+    "quanzo/yii2-resource-collector"`
+
+3.  Add to configuration
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 $config = [
@@ -24,20 +51,26 @@ $config = [
         'collector',
     ],
     'modules' => [
-        'collector' => [ // сборщик ресурсов для шаблонов
+        'collector' => [
             'class' => 'x51\yii2\modules\resourceCollector\Module',
-            'cacheDir' => 'cache', // задает имя папки для сохранения кешированных ресурсов (не обязательно)
+            'cacheDir' => 'cache', // sets the name of the folder for saving cached resources (optional)
+            'optimizeCss' => false, // merge styles files 
+            'optimizeJs' => false, // merge script files
+            'preload' => [], // or function ():array list of files to preload
+            'scssImportPath' => [], // a list of directories in which files scss for @import will occur
+            'scssVar' => [], // variables for scss
+            'scssFunc' => [], // functions for scss
         ],
     ]
 ];
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-События
--------
-
-нет
-
-Методы
+Events
 ------
 
-нет
+no
+
+Methods
+-------
+
+no
