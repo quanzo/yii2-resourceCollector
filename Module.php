@@ -15,6 +15,8 @@ class Module extends \yii\base\Module
     public $optimizeJs = false;
     public $makePreload = false;
     public $preload = [];
+	public $jsFormatter = 'jshrink';
+	public $cssFormatter = '\\ScssPhp\\ScssPhp\\Formatter\\Nested';
 
     protected $_arScssImportPath = [];
     protected $_scssVariables = '';
@@ -48,6 +50,8 @@ class Module extends \yii\base\Module
             $arCss = [];
             $arJs = [];
             $bender = new Bender($this->_arScssImportPath, intval($this->optimizeTTL));
+			$bender->jsmin = $this->jsFormatter;
+			$bender->formatter = $this->cssFormatter;
             if ($this->_scssFunctions) {
                 $bender->functionsConfig = $this->_scssFunctions;
             }
