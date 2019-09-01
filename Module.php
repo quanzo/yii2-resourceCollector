@@ -11,10 +11,11 @@ class Module extends \yii\base\Module
     public $cacheDir = 'cache';
     
 	public $optimizeTTL = -1;
-    public $optimizeCss = false;
-    public $optimizeJs = false;
-    public $makePreload = false;
-    public $preload = [];
+    public $optimizeCss = false; // enable/disable optimize css files
+    public $optimizeJs = false; // enable/disable optimize js files
+    public $makePreload = false; // make optimized resources as preload
+    public $preload = []; // this files make preload. may be array or callable
+    public $exclude = []; // exclude this files from optimize. may be array or callable. use mask * ?
 	public $jsFormatter = 'jshrink';
 	public $cssFormatter = '\\ScssPhp\\ScssPhp\\Formatter\\Nested';
 
@@ -133,6 +134,12 @@ class Module extends \yii\base\Module
         $this->_scssFunctions = $funcs;
     }
 
+    /**
+     * Получить список из свойства. Значением может быть массивом или функцией function():array
+     *
+     * @param string $propName
+     * @return array
+     */
     protected function getListFromProp($propName) {
         $arRes = [];
         if (!empty($this->$propName)) {            
@@ -149,6 +156,17 @@ class Module extends \yii\base\Module
             }
         }
         return $arRes;
+    }
+
+    protected function checkOnList($value, array $arMaskList) {
+        if ($arMaskList) {
+            foreach ($arMaskList as $mask) {
+                if (fnmatch($mask, $value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected function makePreloadFile($f) {
@@ -173,6 +191,13 @@ class Module extends \yii\base\Module
         }
     } // end preloadFile
 
+    /**
+     * Выбирает ресурсы для сжатия. Убирает их из списка.
+     * Возвращает список для оптимизации
+     *
+     * @param array $ar
+     * @return array
+     */
     protected function chooseResources(array &$ar) {
         $res = [];
         if ($ar) {
@@ -180,7 +205,13 @@ class Module extends \yii\base\Module
                 if (is_array($html)) {
                     $res = array_merge($res, $this->chooseResources($html));
                 } else {
-                    if (strpos($html, ' media=') === false && strpos($fn, '/'.$this->cacheDir) !== 0 && strpos($fn, 'http') === false && strpos($fn, '.php') === false && strpos($fn, '?') === false) {
+                    $suitable = (strpos($html, ' media=') === false && strpos($fn, '/'.$this->cacheDir) !== 0 && strpos($fn, 'http') === false && strpos($fn, '.php') === false && strpos($fn, '?') === false);
+                    if ($suitable) {                        
+                        if ($this->checkOnList($fn, $this->getListFromProp('exclude'))) {
+                            $suitable = false;
+                        }
+                    }                    
+                    if ($suitable) {
                         $res[$fn] = $html;
                         unset($ar[$fn]);
                     }

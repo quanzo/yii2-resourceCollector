@@ -57,6 +57,9 @@ $config = [
             'optimizeCss' => false, // merge styles files 
             'optimizeJs' => false, // merge script files
             'preload' => [], // or function ():array list of files to preload
+            'exclude' => [
+                '*ckeditor*'
+            ], // or function ():array list of mask for exclude from optimize
             'scssImportPath' => [], // a list of directories in which files scss for @import will occur
             'scssVar' => [], // variables for scss
             'scssFunc' => [], // functions for scss
